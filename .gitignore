@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+##Docker
+/docker-compose.yml
+
+##Maven
+/.mvn/
+/mvnw
+/mvnw.cmd
