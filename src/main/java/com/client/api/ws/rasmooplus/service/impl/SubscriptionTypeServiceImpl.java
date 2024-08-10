@@ -1,5 +1,6 @@
 package com.client.api.ws.rasmooplus.service.impl;
 
+import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
 import com.client.api.ws.rasmooplus.model.SubscriptionType;
 import com.client.api.ws.rasmooplus.repository.SubscriptionTypeRepository;
 import com.client.api.ws.rasmooplus.service.SubscriptionTypeService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
@@ -26,7 +28,13 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
     @Override
     public SubscriptionType findById(Long id) {
-        return null;
+        Optional<SubscriptionType> optional = repository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new NotFoundException("Subscription type not found");
+        }
+
+        return optional.get();
     }
 
     @Override
