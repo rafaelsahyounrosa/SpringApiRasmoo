@@ -31,14 +31,10 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
     @Override
     public SubscriptionType findById(Long id) {
-        Optional<SubscriptionType> optional = repository.findById(id);
-
-        if (optional.isEmpty()) {
-            throw new NotFoundException("Subscription type not found");
-        }
-
-        return optional.get();
+       return getSubscriptionType(id);
     }
+
+
 
     @Override
     public SubscriptionType create(SubscriptionTypeDTO subscriptionTypeDTO) {
@@ -57,12 +53,31 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
     }
 
     @Override
-    public SubscriptionType update(Long id, SubscriptionType subscriptionType) {
-        return null;
+    public SubscriptionType update(Long id, SubscriptionTypeDTO subscriptionTypeDTO) {
+        
+       getSubscriptionType(id);
+
+        return repository.save(SubscriptionType.builder()
+                .id(id)
+                .name(subscriptionTypeDTO.getName())
+                .accessMonth(subscriptionTypeDTO.getAccessMonth())
+                .price(subscriptionTypeDTO.getPrice())
+                .productKey(subscriptionTypeDTO.getProductKey())
+                .build());
     }
 
     @Override
     public void delete(Long id) {
+        getSubscriptionType(id);
+        repository.deleteById(id);
+    }
 
+    private SubscriptionType getSubscriptionType(Long id) {
+        Optional<SubscriptionType> optional = repository.findById(id);
+
+        if (optional.isEmpty()) {
+            throw new NotFoundException("Subscription type not found");
+        }
+        return optional.get();
     }
 }

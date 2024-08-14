@@ -10,6 +10,6 @@ public interface SubscriptionTypeService {
     List<SubscriptionType> findAll();
     SubscriptionType findById(Long id);
     SubscriptionType create(SubscriptionTypeDTO subscriptionTypeDTO);
-    SubscriptionType update(Long id, SubscriptionType subscriptionType);
+    SubscriptionType update(Long id, SubscriptionTypeDTO subscriptionTypeDTO);
     void delete(Long id);
 }
