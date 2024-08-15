@@ -10,7 +10,7 @@ public class SubscriptionTypeMapper {
         return SubscriptionType.builder()
                 .id(subscriptionTypeDTO.getId())
                 .name(subscriptionTypeDTO.getName())
-                .accessMonth(subscriptionTypeDTO.getAccessMonth())
+                .accessMonths(subscriptionTypeDTO.getAccessMonths())
                 .price(subscriptionTypeDTO.getPrice())
                 .productKey(subscriptionTypeDTO.getProductKey())
                 .build();

@@ -2,7 +2,6 @@ package com.client.api.ws.rasmooplus.controller;
 
 
 import com.client.api.ws.rasmooplus.dto.SubscriptionTypeDTO;
-import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
 import com.client.api.ws.rasmooplus.model.SubscriptionType;
 import com.client.api.ws.rasmooplus.service.SubscriptionTypeService;
 import jakarta.validation.Valid;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/subscription-type")

@@ -18,14 +18,14 @@ import java.math.BigDecimal;
 public class SubscriptionTypeDTO {
 
     private Long id;
-    @NotBlank(message = "Name can't be null or blank")
-    @Size(min=5, max=30)
+    @NotBlank(message = "Field can't be null or blank")
+    @Size(min=5, max=30, message = "Field must have between 5 and 30 chars")
     private String name;
     @Max(value=12, message = "Access Month can't be greater then 12")
-    private Long accessMonth;
+    private Long accessMonths;
     @NotNull(message = "Price can't be null")
     private BigDecimal price;
-    @NotBlank(message = "Product Key can't be null or blank")
-    @Size(min=5, max=15, message = "Product key must have between 5 and 15 chars")
+    @NotBlank(message = "Field can't be null or blank")
+    @Size(min=5, max=15, message = "Field must have between 5 and 15 chars")
     private String productKey;
 }
