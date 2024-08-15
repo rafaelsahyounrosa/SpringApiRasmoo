@@ -1,5 +1,6 @@
 package com.client.api.ws.rasmooplus.service.impl;
 
+import com.client.api.ws.rasmooplus.controller.SubscriptionTypeController;
 import com.client.api.ws.rasmooplus.dto.SubscriptionTypeDTO;
 import com.client.api.ws.rasmooplus.exceptions.BadRequestException;
 import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
@@ -8,6 +9,7 @@ import com.client.api.ws.rasmooplus.model.SubscriptionType;
 import com.client.api.ws.rasmooplus.repository.SubscriptionTypeRepository;
 import com.client.api.ws.rasmooplus.service.SubscriptionTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Optional;
 @Service
 public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
+    private static final String UPDATE = "update";
+    private static final String DELETE = "delete";
     private final SubscriptionTypeRepository repository;
 
 
@@ -32,7 +36,18 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
     @Override
     public SubscriptionType findById(Long id) {
-       return getSubscriptionType(id);
+       return getSubscriptionType(id).add(WebMvcLinkBuilder.linkTo(
+               WebMvcLinkBuilder.methodOn(SubscriptionTypeController.class).findById(id))
+                       .withSelfRel()
+       )
+               .add(WebMvcLinkBuilder.linkTo(
+               WebMvcLinkBuilder.methodOn(SubscriptionTypeController.class).update(id, new SubscriptionTypeDTO()))
+                       .withRel(UPDATE)
+       )
+               .add(WebMvcLinkBuilder.linkTo(
+                       WebMvcLinkBuilder.methodOn(SubscriptionTypeController.class).delete(id))
+                       .withRel(DELETE)
+               );
     }
 
 
