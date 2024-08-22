@@ -4,6 +4,7 @@ import com.client.api.ws.rasmooplus.dto.wsraspay.CustomerDTO;
 import com.client.api.ws.rasmooplus.dto.wsraspay.OrderDTO;
 import com.client.api.ws.rasmooplus.dto.wsraspay.PaymentDTO;
 import com.client.api.ws.rasmooplus.integration.WsRaspayIntegration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,8 +18,17 @@ import java.util.Base64;
 public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
 
     private final RestTemplate restTemplate;
-    private final String BASE_URL = "https://raspay-api-61f5fa5fc34c.herokuapp.com";
+    //private final String BASE_URL = "https://raspay-api-61f5fa5fc34c.herokuapp.com";
     private final HttpHeaders headers;
+
+    @Value("${webservices.raspay.host}")
+    private String raspayHost;
+    @Value("${webservices.raspay.v1.customer}")
+    private String customerURL;
+    @Value("${webservices.raspay.v1.order}")
+    private String orderURL;
+    @Value("${webservices.raspay.v1.payment}")
+    private String paymentURL;
 
     public WsRaspayIntegrationImpl() {
         restTemplate = new RestTemplate();
@@ -31,7 +41,7 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
         try {
             HttpEntity<CustomerDTO> request = new HttpEntity<>(customerDTO, this.headers);
             ResponseEntity<CustomerDTO> response =
-                    restTemplate.exchange(BASE_URL + "/ws-raspay/v1/customer", HttpMethod.POST, request, CustomerDTO.class);
+                    restTemplate.exchange(raspayHost + customerURL, HttpMethod.POST, request, CustomerDTO.class);
 
             return response.getBody();
 
@@ -46,7 +56,7 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
         try {
             HttpEntity<OrderDTO> request = new HttpEntity<>(orderDTO, this.headers);
             ResponseEntity<OrderDTO> response =
-                    restTemplate.exchange(BASE_URL + "/ws-raspay/v1/order", HttpMethod.POST, request, OrderDTO.class);
+                    restTemplate.exchange(raspayHost + orderURL, HttpMethod.POST, request, OrderDTO.class);
 
             return response.getBody();
 
@@ -60,7 +70,7 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
         try {
             HttpEntity<PaymentDTO> request = new HttpEntity<>(paymentDTO, this.headers);
             ResponseEntity<Boolean> response =
-                    restTemplate.exchange(BASE_URL + "/ws-raspay/v1/payment/credit-card/", HttpMethod.POST, request, Boolean.class);
+                    restTemplate.exchange(raspayHost + paymentURL, HttpMethod.POST, request, Boolean.class);
 
             return response.getBody();
 
