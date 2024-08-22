@@ -16,21 +16,20 @@ import java.util.Base64;
 @Component
 public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
 
-    private RestTemplate restTemplate;
-    private String BASE_URL = "https://raspay-api-61f5fa5fc34c.herokuapp.com";
+    private final RestTemplate restTemplate;
+    private final String BASE_URL = "https://raspay-api-61f5fa5fc34c.herokuapp.com";
+    private final HttpHeaders headers;
 
     public WsRaspayIntegrationImpl() {
         restTemplate = new RestTemplate();
+        headers = getHttpHeaders();
     }
 
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
 
         try {
-
-            HttpHeaders headers = getHttpHeaders();
-
-            HttpEntity<CustomerDTO> request = new HttpEntity<>(customerDTO, headers);
+            HttpEntity<CustomerDTO> request = new HttpEntity<>(customerDTO, this.headers);
             ResponseEntity<CustomerDTO> response =
                     restTemplate.exchange(BASE_URL + "/ws-raspay/v1/customer", HttpMethod.POST, request, CustomerDTO.class);
 
@@ -44,7 +43,16 @@ public class WsRaspayIntegrationImpl implements WsRaspayIntegration {
 
     @Override
     public OrderDTO createOrder(OrderDTO orderDTO) {
-        return null;
+        try {
+            HttpEntity<OrderDTO> request = new HttpEntity<>(orderDTO, this.headers);
+            ResponseEntity<OrderDTO> response =
+                    restTemplate.exchange(BASE_URL + "/ws-raspay/v1/order", HttpMethod.POST, request, OrderDTO.class);
+
+            return response.getBody();
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
