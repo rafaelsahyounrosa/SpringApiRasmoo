@@ -6,6 +6,7 @@ import com.client.api.ws.rasmooplus.exceptions.BadRequestException;
 import com.client.api.ws.rasmooplus.model.jpa.UserCredentials;
 import com.client.api.ws.rasmooplus.service.AuthenticationService;
 import com.client.api.ws.rasmooplus.service.TokenService;
+import com.client.api.ws.rasmooplus.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailService userDetailsService;
 
     @Autowired
     private TokenService tokenService;
