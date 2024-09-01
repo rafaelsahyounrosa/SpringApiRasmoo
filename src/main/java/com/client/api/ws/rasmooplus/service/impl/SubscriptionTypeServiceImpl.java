@@ -5,10 +5,9 @@ import com.client.api.ws.rasmooplus.dto.SubscriptionTypeDTO;
 import com.client.api.ws.rasmooplus.exceptions.BadRequestException;
 import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
 import com.client.api.ws.rasmooplus.mapper.SubscriptionTypeMapper;
-import com.client.api.ws.rasmooplus.model.SubscriptionType;
-import com.client.api.ws.rasmooplus.repository.SubscriptionTypeRepository;
+import com.client.api.ws.rasmooplus.model.jpa.SubscriptionType;
+import com.client.api.ws.rasmooplus.repository.jpa.SubscriptionTypeRepository;
 import com.client.api.ws.rasmooplus.service.SubscriptionTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 

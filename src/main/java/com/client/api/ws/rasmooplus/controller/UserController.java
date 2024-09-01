@@ -1,7 +1,7 @@
 package com.client.api.ws.rasmooplus.controller;
 
 import com.client.api.ws.rasmooplus.dto.UserDTO;
-import com.client.api.ws.rasmooplus.model.User;
+import com.client.api.ws.rasmooplus.model.jpa.User;
 import com.client.api.ws.rasmooplus.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

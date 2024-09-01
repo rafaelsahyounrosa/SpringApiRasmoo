@@ -1,4 +1,4 @@
-package com.client.api.ws.rasmooplus.model;
+package com.client.api.ws.rasmooplus.model.jpa;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class UserPaymentInfo implements Serializable {
     @Column(name = "card_security_code")
     private String cardSecurityCode;
     private BigDecimal price;
-    private Integer installments;
+    private Long installments;
 
     @Column(name = "dt_payment")
     private LocalDate dtPayment;

@@ -4,10 +4,10 @@ import com.client.api.ws.rasmooplus.dto.UserDTO;
 import com.client.api.ws.rasmooplus.exceptions.BadRequestException;
 import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
 import com.client.api.ws.rasmooplus.mapper.UserMapper;
-import com.client.api.ws.rasmooplus.model.User;
-import com.client.api.ws.rasmooplus.model.UserType;
-import com.client.api.ws.rasmooplus.repository.UserRepository;
-import com.client.api.ws.rasmooplus.repository.UserTypeRepository;
+import com.client.api.ws.rasmooplus.model.jpa.User;
+import com.client.api.ws.rasmooplus.model.jpa.UserType;
+import com.client.api.ws.rasmooplus.repository.jpa.UserRepository;
+import com.client.api.ws.rasmooplus.repository.jpa.UserTypeRepository;
 import com.client.api.ws.rasmooplus.service.UserService;
 import org.springframework.stereotype.Service;
 

@@ -13,10 +13,10 @@ import com.client.api.ws.rasmooplus.mapper.wsraspay.CreditCardMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.CustomerMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.OrderMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.PaymentMapper;
-import com.client.api.ws.rasmooplus.model.User;
-import com.client.api.ws.rasmooplus.model.UserPaymentInfo;
-import com.client.api.ws.rasmooplus.repository.UserPaymentInfoRepository;
-import com.client.api.ws.rasmooplus.repository.UserRepository;
+import com.client.api.ws.rasmooplus.model.jpa.User;
+import com.client.api.ws.rasmooplus.model.jpa.UserPaymentInfo;
+import com.client.api.ws.rasmooplus.repository.jpa.UserPaymentInfoRepository;
+import com.client.api.ws.rasmooplus.repository.jpa.UserRepository;
 import com.client.api.ws.rasmooplus.service.PaymentInfoService;
 import org.springframework.stereotype.Service;
 

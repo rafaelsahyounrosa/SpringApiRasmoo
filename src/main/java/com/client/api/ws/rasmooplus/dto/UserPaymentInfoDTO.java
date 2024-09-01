@@ -1,6 +1,5 @@
 package com.client.api.ws.rasmooplus.dto;
 
-import com.client.api.ws.rasmooplus.model.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
