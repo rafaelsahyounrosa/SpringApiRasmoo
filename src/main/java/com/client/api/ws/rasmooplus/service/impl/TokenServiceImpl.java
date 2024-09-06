@@ -5,9 +5,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.util.Date;
 
 @Service
@@ -19,6 +22,8 @@ public class TokenServiceImpl implements TokenService {
     @Value("${webservices.rasplus.jwt.secret}")
     private String secret;
 
+
+
     @Override
     public String getToken(Long userId) {
 
@@ -29,8 +34,14 @@ public class TokenServiceImpl implements TokenService {
                 .setSubject(userId.toString())
                 .setIssuedAt(today)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+//                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
+    }
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
