@@ -1,8 +1,8 @@
 package com.client.api.ws.rasmooplus.mapper;
 
 import com.client.api.ws.rasmooplus.dto.UserPaymentInfoDTO;
-import com.client.api.ws.rasmooplus.model.User;
-import com.client.api.ws.rasmooplus.model.UserPaymentInfo;
+import com.client.api.ws.rasmooplus.model.jpa.User;
+import com.client.api.ws.rasmooplus.model.jpa.UserPaymentInfo;
 
 public class UserPaymentInfoMapper {
 
@@ -15,6 +15,7 @@ public class UserPaymentInfoMapper {
                 .cardExpirationYear(dto.getCardExpirationYear())
                 .cardSecurityCode(dto.getCardSecurityCode())
                 .price(dto.getPrice())
+                .installments(dto.getInstallments())
                 .dtPayment(dto.getDtPayment())
                 .user(user).build();
     }

@@ -4,6 +4,7 @@ import com.client.api.ws.rasmooplus.dto.PaymentProccessDTO;
 import com.client.api.ws.rasmooplus.dto.wsraspay.CustomerDTO;
 import com.client.api.ws.rasmooplus.dto.wsraspay.OrderDTO;
 import com.client.api.ws.rasmooplus.dto.wsraspay.PaymentDTO;
+import com.client.api.ws.rasmooplus.enums.UserTypeEnum;
 import com.client.api.ws.rasmooplus.exceptions.BusinessException;
 import com.client.api.ws.rasmooplus.exceptions.NotFoundException;
 import com.client.api.ws.rasmooplus.integration.MailIntegration;
@@ -13,11 +14,13 @@ import com.client.api.ws.rasmooplus.mapper.wsraspay.CreditCardMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.CustomerMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.OrderMapper;
 import com.client.api.ws.rasmooplus.mapper.wsraspay.PaymentMapper;
-import com.client.api.ws.rasmooplus.model.User;
-import com.client.api.ws.rasmooplus.model.UserPaymentInfo;
-import com.client.api.ws.rasmooplus.repository.UserPaymentInfoRepository;
-import com.client.api.ws.rasmooplus.repository.UserRepository;
+import com.client.api.ws.rasmooplus.model.jpa.User;
+import com.client.api.ws.rasmooplus.model.jpa.UserCredentials;
+import com.client.api.ws.rasmooplus.model.jpa.UserPaymentInfo;
+import com.client.api.ws.rasmooplus.repository.jpa.*;
 import com.client.api.ws.rasmooplus.service.PaymentInfoService;
+import com.client.api.ws.rasmooplus.utils.PasswordUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -25,59 +28,79 @@ import java.util.Objects;
 @Service
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
+    @Value("${webservices.rasplus.default.password}")
+    private String defaultPass;
+
+
     private final UserRepository userRepository;
     private final UserPaymentInfoRepository userPaymentInfoRepository;
     private final WsRaspayIntegration wsRaspayIntegration;
     private final MailIntegration mailIntegration;
+    private final UserDetailsRepository userDetailsRepository;
+    private final UserTypeRepository userTypeRepository;
+    private final SubscriptionTypeRepository subscriptionTypeRepository;
 
 
     PaymentInfoServiceImpl(UserRepository userRepository, UserPaymentInfoRepository userPaymentInfoRepository,
-                           WsRaspayIntegration wsRaspayIntegration, MailIntegration mailIntegration){
+                           WsRaspayIntegration wsRaspayIntegration, MailIntegration mailIntegration,
+                           UserDetailsRepository userDetailsRepository, UserTypeRepository userTypeRepository,
+                           SubscriptionTypeRepository subscriptionTypeRepository) {
         this.userRepository = userRepository;
         this.userPaymentInfoRepository = userPaymentInfoRepository;
         this.wsRaspayIntegration = wsRaspayIntegration;
         this.mailIntegration = mailIntegration;
+        this.userDetailsRepository = userDetailsRepository;
+        this.userTypeRepository = userTypeRepository;
+        this.subscriptionTypeRepository = subscriptionTypeRepository;
     }
 
     @Override
-    public Boolean process(PaymentProccessDTO paymentProccessDTO) {
-        //verifica user por id e verifica se já existe assinatura
-        var userOpt = userRepository.findById(paymentProccessDTO.getUserPaymentInfoDto().getUserId());
-        if(userOpt.isEmpty()){
-            throw new NotFoundException("user not found");
+    public Boolean process(PaymentProccessDTO dto) {
+        var userOpt = userRepository.findById(dto.getUserPaymentInfoDto().getUserId());
+        if (userOpt.isEmpty()) {
+            throw new NotFoundException("User not found");
         }
-
         User user = userOpt.get();
-        if(Objects.nonNull(user.getSubscriptionType())){
-            throw new BusinessException("Payment cannot be processed because the user already has a subscription");
+        if (Objects.nonNull(user.getSubscriptionType())) {
+            throw new BusinessException("Pagamento não pode ser processado pois usuário já possui assinatura");
         }
 
-        //criar ou atualiza o user raspay
-        CustomerDTO customerDTO = wsRaspayIntegration.createCustomer(CustomerMapper.build(user));
+        Boolean successPayment = getSucessPayment(dto, user);
 
-        //cria o pedido de pagamento
-        OrderDTO orderDTO = wsRaspayIntegration.createOrder(OrderMapper.build(customerDTO.getId(), paymentProccessDTO));
+        return createUserCredentials(dto, user, successPayment);
+    }
 
-        //processa e retorna o pagamento
-        PaymentDTO paymentDTO = PaymentMapper.build(customerDTO.getId(),
-                                                    orderDTO.getId(),
-                                                    CreditCardMapper.build(user.getCpf(),
-                                                    paymentProccessDTO.getUserPaymentInfoDto()));
-
-        Boolean successPayment = wsRaspayIntegration.processPayment(paymentDTO);
-
-        if(Boolean.TRUE.equals(successPayment)){
-            //salva as info de pagamento
-            UserPaymentInfo userPaymentInfo = UserPaymentInfoMapper.fromDtoToEntity(paymentProccessDTO.getUserPaymentInfoDto(), user);
+    private boolean createUserCredentials(PaymentProccessDTO dto, User user, Boolean successPayment) {
+        if (Boolean.TRUE.equals(successPayment)) {
+            UserPaymentInfo userPaymentInfo = UserPaymentInfoMapper.fromDtoToEntity(dto.getUserPaymentInfoDto(), user);
             userPaymentInfoRepository.save(userPaymentInfo);
 
-            //envia email de criação de conta
-            mailIntegration.send(user.getEmail(), "Olá "+ user.getEmail() +", seu pagamento foi aprovado! Senha proovisória xyz", "Pagamento Aprovado");
+            var userTypeOpt = userTypeRepository.findById(UserTypeEnum.ALUNO.getId());
+
+            if (userTypeOpt.isEmpty()) {
+                throw new NotFoundException("UserType not found");
+            }
+            UserCredentials userCredentials = new UserCredentials(null, user.getEmail(), PasswordUtils.encode(defaultPass), userTypeOpt.get());
+            userDetailsRepository.save(userCredentials);
+
+            var subscriptionTypeOpt = subscriptionTypeRepository.findByProductKey(dto.getProductKey());
+
+            if (subscriptionTypeOpt.isEmpty()) {
+                throw new NotFoundException("SubscriptionType not found");
+            }
+            user.setSubscriptionType(subscriptionTypeOpt.get());
+            userRepository.save(user);
+
+            mailIntegration.send(user.getEmail(), "Usuario: " + user.getEmail() + " - Senha: " + defaultPass, "Acesso liberado");
             return true;
         }
-
-        //retorna o sucesso ou nao do pagamento
-
         return false;
+    }
+
+    private Boolean getSucessPayment(PaymentProccessDTO dto, User user) {
+        CustomerDTO customerDto = wsRaspayIntegration.createCustomer(CustomerMapper.build(user));
+        OrderDTO orderDto = wsRaspayIntegration.createOrder(OrderMapper.build(customerDto.getId(), dto));
+        PaymentDTO paymentDto = PaymentMapper.build(customerDto.getId(), orderDto.getId(), CreditCardMapper.build(user.getCpf(), dto.getUserPaymentInfoDto()));
+        return wsRaspayIntegration.processPayment(paymentDto);
     }
 }

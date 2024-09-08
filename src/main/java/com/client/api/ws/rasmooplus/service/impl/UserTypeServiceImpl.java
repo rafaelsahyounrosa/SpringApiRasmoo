@@ -3,8 +3,8 @@ package com.client.api.ws.rasmooplus.service.impl;
 import com.client.api.ws.rasmooplus.dto.UserTypeDTO;
 import com.client.api.ws.rasmooplus.exceptions.BadRequestException;
 import com.client.api.ws.rasmooplus.mapper.UserTypeMapper;
-import com.client.api.ws.rasmooplus.model.UserType;
-import com.client.api.ws.rasmooplus.repository.UserTypeRepository;
+import com.client.api.ws.rasmooplus.model.jpa.UserType;
+import com.client.api.ws.rasmooplus.repository.jpa.UserTypeRepository;
 import com.client.api.ws.rasmooplus.service.UserTypeService;
 import org.springframework.stereotype.Service;
 
