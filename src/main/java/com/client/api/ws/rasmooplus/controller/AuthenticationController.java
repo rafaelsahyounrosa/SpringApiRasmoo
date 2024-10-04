@@ -8,11 +8,14 @@ import com.client.api.ws.rasmooplus.service.AuthenticationService;
 import com.client.api.ws.rasmooplus.service.UserDetailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+//@Api(tags = SwaggerConfig.AUTENTICACAO)
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
@@ -21,7 +24,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private UserDetailService userDetailsService;
+    private UserDetailService userDetailService;
 
     //    @ApiOperation(value = "Realiza a autenticacao do usuario")
 //    @ApiResponses(value = {
@@ -42,7 +45,7 @@ public class AuthenticationController {
 //    })
     @PostMapping(value = "/recovery-code/send",consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendRecoveryCode(@RequestBody @Valid UserRecoveryCode dto) {
-        userDetailsService.sendRecoveryCode(dto.getEmail());
+        userDetailService.sendRecoveryCode(dto.getEmail());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -55,7 +58,7 @@ public class AuthenticationController {
     @GetMapping(value = "/recovery-code/")
     public ResponseEntity<?> recoveryCodeIsValid(@RequestParam("recoveryCode") String recoveryCode,
                                                  @RequestParam("email") String email) {
-        return ResponseEntity.status(HttpStatus.OK).body( userDetailsService.recoveryCodeIsValid(recoveryCode, email));
+        return ResponseEntity.status(HttpStatus.OK).body( userDetailService.recoveryCodeIsValid(recoveryCode, email));
     }
 
     //    @ApiOperation(value = "Atualiza senha a partir de um codigo de recuperacao valido")
@@ -66,7 +69,7 @@ public class AuthenticationController {
 //    })
     @PatchMapping(value = "/recovery-code/password", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePasswordByRecoveryCode(@RequestBody @Valid UserDetailsDTO dto) {
-        userDetailsService.updatePasswordByRecoveryCode(dto);
+        userDetailService.updatePasswordByRecoveryCode(dto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

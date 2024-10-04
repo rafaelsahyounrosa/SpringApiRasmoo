@@ -22,7 +22,7 @@ public class UserRecoveryCode {
     private String id;
 
     @Indexed
-    @Email(message = "inválido")
+    @Email(message = "invalid")
     private String email;
 
     private String code;

@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailService {
             return userCredentials;
         }
 
-        throw new BadRequestException("Usuário ou senha inválido");
+        throw new BadRequestException("User or password incorrect");
     }
 
     @Override
