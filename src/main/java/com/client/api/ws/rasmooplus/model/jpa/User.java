@@ -21,9 +21,16 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "users_id")
     private Long id;
+
     private String name;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private String phone;
+
+    @Column(unique = true)
     private String cpf;
 
     @Column(name = "dt_subscription")
@@ -31,6 +38,11 @@ public class User implements Serializable {
 
     @Column(name = "dt_expiration")
     private LocalDate dtExpiration;
+
+    @Column(name = "photo_name")
+    private String photoName;
+
+    private byte[] photo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_type_id")

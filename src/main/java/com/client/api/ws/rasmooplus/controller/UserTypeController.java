@@ -6,6 +6,7 @@ import com.client.api.ws.rasmooplus.model.jpa.UserType;
 import com.client.api.ws.rasmooplus.service.UserTypeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class UserTypeController {
     private UserTypeService userTypeService;
 
     @GetMapping
+    @Cacheable(value = "userType")
     public ResponseEntity<List<UserType>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(userTypeService.findAll());
     }

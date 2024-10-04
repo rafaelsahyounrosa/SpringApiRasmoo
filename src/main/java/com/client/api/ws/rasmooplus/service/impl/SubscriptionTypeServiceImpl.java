@@ -8,6 +8,8 @@ import com.client.api.ws.rasmooplus.mapper.SubscriptionTypeMapper;
 import com.client.api.ws.rasmooplus.model.jpa.SubscriptionType;
 import com.client.api.ws.rasmooplus.repository.jpa.SubscriptionTypeRepository;
 import com.client.api.ws.rasmooplus.service.SubscriptionTypeService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +31,13 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
     }
 
     @Override
+    @Cacheable(value = "subscriptionType")
     public List<SubscriptionType> findAll() {
         return repository.findAll();
     }
 
     @Override
+    @Cacheable(value = "subscriptionType", key = "#id")
     public SubscriptionType findById(Long id) {
        return getSubscriptionType(id).add(WebMvcLinkBuilder.linkTo(
                WebMvcLinkBuilder.methodOn(SubscriptionTypeController.class).findById(id))
@@ -52,6 +56,7 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
 
 
     @Override
+    @CacheEvict(value = "subscriptionType", allEntries = true)
     public SubscriptionType create(SubscriptionTypeDTO subscriptionTypeDTO) {
 
         if(Objects.nonNull(subscriptionTypeDTO.getId())) {
@@ -62,6 +67,7 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
     }
 
     @Override
+    @CacheEvict(value = "subscriptionType", allEntries = true)
     public SubscriptionType update(Long id, SubscriptionTypeDTO subscriptionTypeDTO) {
         
        getSubscriptionType(id);
@@ -70,6 +76,7 @@ public class SubscriptionTypeServiceImpl implements SubscriptionTypeService {
     }
 
     @Override
+    @CacheEvict(value = "subscriptionType", allEntries = true)
     public void delete(Long id) {
         getSubscriptionType(id);
         repository.deleteById(id);
